@@ -1,0 +1,11 @@
+{
+    // Use the backend virtual environment for Python files
+    "python.pythonPath": "${workspaceFolder}/backend/venv/Scripts/python.exe",
+    // Make sure the backend package is resolvable for imports
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/backend"
+    ],
+    "python.analysis.packageIndexDepths": {
+        "app": 2
+    }
+}

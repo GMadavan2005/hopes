@@ -1,14 +1,69 @@
-# Welcome to your Lovable project
+# Soundlog Music Discovery App
+
+A full-stack music discovery platform with AI-powered search, multiple music API integrations, sentiment analysis, and a React frontend built with Vite + shadcn-ui.
+
+---
+
+## Project Overview
+
+This repository contains two main parts:
+
+1. **backend** – FastAPI server written in Python. Provides smart search, artist info, review sentiment, user preferences, and integrates with Gemini AI, MusicBrainz, Last.fm, iTunes, and AudioDB.
+2. **frontend** – React/TypeScript application powered by Vite and Tailwind CSS. Uses React Query to call backend endpoints and render the UI.
+
+Continue reading for setup instructions.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
-## How can I edit this code?
+## Getting Started
+
+To run the project locally you'll need Node.js (for the frontend) and Python 3.11+ (for the backend). The repository uses a virtual environment for Python and npm/yarn for the frontend.
+
+### Backend setup
+
+```bash
+cd backend
+python -m venv venv            # create virtual environment
+venv\Scripts\activate         # Windows; use `source venv/bin/activate` on macOS/Linux
+pip install -r requirements.txt # install dependencies
+cp .env.example .env            # create your own environment file
+# edit `.env` with API keys and database URL
+```
+
+Once the backend is configured you can start the server:
+
+```bash
+cd backend
+venv\Scripts\python -m uvicorn app.main:app --reload --port 8000
+```
+
+The API will listen on `http://localhost:8000` and exposes endpoints like `/api/search`, `/api/artist/{mbid}`, etc.
+
+### Frontend setup
+
+```bash
+cd ..                # root of repo
+npm install
+npm run dev          # starts Vite dev server on http://localhost:5173
+```
+
+The frontend expects `VITE_BACKEND_URL` in `.env` (e.g. `http://localhost:8000`).
+
+### Running both
+
+You can open two shells and run the backend and frontend commands above simultaneously. Optionally install [`concurrently`](https://www.npmjs.com/package/concurrently) and add a script to `package.json` if you prefer.
+
+---
+
+# How can I edit this code?
 
 There are several ways of editing your application.
 
 **Use Lovable**
+
+(Note: the original README content below is generic; the section above contains project-specific instructions only.)
 
 Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
 
