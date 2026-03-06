@@ -4,7 +4,7 @@ import { Search as SearchIcon, Loader2, Music } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Navbar } from '@/components/Navbar';
 import { SongCard } from '@/components/SongCard';
-import { searchSongs, ITunesSong } from '@/lib/itunes';
+import { smartSearch } from '@/lib/api';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useQuery } from '@tanstack/react-query';
 
@@ -22,11 +22,13 @@ export default function Search() {
     }
   }, [debouncedQuery, setSearchParams]);
 
-  const { data: songs, isLoading } = useQuery({
-    queryKey: ['searchSongs', debouncedQuery],
-    queryFn: () => searchSongs(debouncedQuery),
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ['smartSearch', debouncedQuery],
+    queryFn: () => smartSearch(debouncedQuery),
     enabled: debouncedQuery.length > 1,
   });
+
+  const songs = searchResults?.results || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,16 +64,16 @@ export default function Search() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
               {songs.map((song, index) => (
                 <div
-                  key={song.trackId}
+                  key={song.song_id}
                   className="animate-fade-in"
                   style={{ animationDelay: `${0.05 * index}s` }}
                 >
                   <SongCard
-                    songId={song.trackId.toString()}
-                    songName={song.trackName}
-                    artistName={song.artistName}
-                    albumName={song.collectionName}
-                    artworkUrl={song.artworkUrl100}
+                    songId={song.song_id}
+                    songName={song.song_name}
+                    artistName={song.artist_name}
+                    albumName={song.album_name}
+                    artworkUrl={song.artwork_url}
                   />
                 </div>
               ))}

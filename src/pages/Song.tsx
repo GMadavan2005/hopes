@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Loader2, Edit2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +7,7 @@ import { Navbar } from '@/components/Navbar';
 import { StarRating } from '@/components/StarRating';
 import { ReviewCard } from '@/components/ReviewCard';
 import { getHighResArtwork } from '@/lib/itunes';
+import { analyzeReview } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -116,6 +117,13 @@ export default function Song() {
     mutationFn: async () => {
       if (!user) throw new Error('Not authenticated');
 
+      // Analyze sentiment
+      let sentiment = 'neutral';
+      if (reviewText && reviewText.length > 3) {
+        const analysis = await analyzeReview(reviewText);
+        sentiment = analysis.sentiment;
+      }
+
       const reviewData = {
         user_id: user.id,
         song_id: id!,
@@ -125,6 +133,7 @@ export default function Song() {
         artwork_url: artworkUrl,
         rating,
         review_text: reviewText || null,
+        sentiment: sentiment, // ADD THIS
       };
 
       if (existingReview) {
@@ -289,7 +298,11 @@ export default function Song() {
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                 {songName}
               </h1>
-              <p className="text-xl text-muted-foreground mb-1">{artistName}</p>
+              <p className="text-xl text-muted-foreground mb-1">
+                <Link to={`/artist/${encodeURIComponent(artistName)}`} className="hover:text-primary transition-colors">
+                  {artistName}
+                </Link>
+              </p>
               {albumName && (
                 <p className="text-muted-foreground">{albumName}</p>
               )}
