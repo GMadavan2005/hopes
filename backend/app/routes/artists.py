@@ -20,16 +20,17 @@ async def get_artist(artist_name: str, db: Session = Depends(get_db)):
     tracks = await audiodb_service.get_artist_tracks(artist_id)
     
     # Save to database
-    existing = db.query(Artist).filter(Artist.artist_id == artist_id).first()
-    if not existing:
-        artist = Artist(
-            artist_id=artist_id,
-            artist_name=artist_data['artist_name'],
-            bio=artist_data['bio'],
-            photo_url=artist_data['photo_url'],
-            genres=[artist_data['genre']] if artist_data.get('genre') else []
-        )
-        db.add(artist)
+    if db is not None:
+        existing = db.query(Artist).filter(Artist.artist_id == artist_id).first()
+        if existing is None:
+            artist = Artist(
+                artist_id=artist_id,
+                artist_name=artist_data['artist_name'],
+                bio=artist_data['bio'],
+                photo_url=artist_data['photo_url'],
+                genres=[artist_data['genre']] if artist_data.get('genre') else []
+            )
+            db.add(artist)
         try:
             db.commit()
         except:

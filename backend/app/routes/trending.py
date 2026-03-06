@@ -9,6 +9,9 @@ router = APIRouter()
 
 @router.get("/trending/{language}")
 async def get_trending(language: str, db: Session = Depends(get_db)):
+    if db is None:
+        return {"language": language, "songs": [], "song_ids": []}
+
     # Check cache (refresh every hour)
     cache = db.query(TrendingCache).filter(
         TrendingCache.language == language

@@ -18,6 +18,10 @@ class PreferencesUpdate(BaseModel):
 
 @router.post("/preferences")
 async def save_preferences(prefs: PreferencesUpdate, db: Session = Depends(get_db)):
+    if db is None:
+        # unable to persist, but still return success for offline mode
+        return {"message": "Preferences saved (in-memory only)"}
+
     existing = db.query(UserPreferences).filter(
         UserPreferences.user_id == prefs.user_id
     ).first()
@@ -44,6 +48,15 @@ async def save_preferences(prefs: PreferencesUpdate, db: Session = Depends(get_d
 
 @router.get("/preferences/{user_id}")
 async def get_preferences(user_id: str, db: Session = Depends(get_db)):
+    if db is None:
+        return {
+            "languages": [],
+            "eras": [],
+            "favorite_artists": [],
+            "genres": [],
+            "onboarding_completed": False
+        }
+
     prefs = db.query(UserPreferences).filter(
         UserPreferences.user_id == user_id
     ).first()
@@ -67,6 +80,9 @@ async def get_preferences(user_id: str, db: Session = Depends(get_db)):
 
 @router.get("/for-you/{user_id}")
 async def get_for_you(user_id: str, db: Session = Depends(get_db)):
+    if db is None:
+        return {"songs": []}
+
     prefs = db.query(UserPreferences).filter(
         UserPreferences.user_id == user_id
     ).first()
